@@ -34,6 +34,7 @@ async function run() {
         await client.connect();
 
         const foodCollection = client.db("shareABite").collection("foods");
+        const foodRequestCollection = client.db("shareABite").collection("foodRequests");
 
         // apis for foods
         app.get('/foods', async (req, res) => {
@@ -48,6 +49,13 @@ async function run() {
             const query = { _id: new ObjectId(id) }
             const result = await foodCollection.findOne(query);
             res.send(result);
+        })
+
+        // insert food request data to database
+        app.post('/food-request', async (req, res) => {
+            const foodData = req.body;
+            const result = await foodRequestCollection.insertOne(foodData)
+            res.send(result)
         })
 
 
