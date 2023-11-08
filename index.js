@@ -74,7 +74,7 @@ async function run() {
             res.send(result)
         })
 
-        // api for updating food item
+        // api for updating food item on food collection
         app.put('/food/:id', async (req, res) => {
             const id = req.params.id;
             const filter = { _id: new ObjectId(id) }
