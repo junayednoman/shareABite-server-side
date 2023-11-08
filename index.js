@@ -122,6 +122,36 @@ async function run() {
             res.send(result);
         })
 
+        app.get('/food-requests', async (req, res) => {
+            const email = req.query.email;
+            let query = [];
+            if (req.query?.email) {
+                query = { requesterEmail: email }
+            }
+            const result = await foodRequestCollection.find(query).toArray();
+            res.send(result)
+        })
+
+        app.patch('/food-requests/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { food_id: id }
+            const foodData = req.body;
+            const updateData = {
+                $set: {
+                    food_status: foodData.food_status
+                }
+            }
+            const result = await foodRequestCollection.updateOne(query, updateData);
+            res.send(result)
+        })
+
+        app.delete('/food-requests/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await foodRequestCollection.deleteOne(query);
+            res.send(result);
+        })
+
 
 
         // Send a ping to confirm a successful connection
