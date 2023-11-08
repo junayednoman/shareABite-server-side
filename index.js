@@ -67,11 +67,46 @@ async function run() {
             res.send(result);
         })
 
-        app.delete('/my-foods/:id', async(req, res) => {
+        app.delete('/my-foods/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
             const result = await foodCollection.deleteOne(query)
             res.send(result)
+        })
+
+        // api for updating food item
+        app.put('/food/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) }
+            const options = { upsert: true };
+            const foodData = req.body;
+
+            const updateData = {
+                $set: {
+                    food_name: foodData.food_name,
+                    food_image: foodData.food_image,
+                    pickup_location: foodData.pickup_location,
+                    quantity: foodData.quantity,
+                    additional_notes: foodData.additional_notes,
+                }
+            }
+            const result = await foodCollection.updateOne(filter, updateData, options)
+            res.send(result);
+        })
+
+        app.patch('/foods/:id', async (req, res) => {
+            const foodData = req.body;
+            const id = req.params.id;
+
+            const filter = { _id: new ObjectId(id) };
+            const updateData = {
+                $set: {
+                    food_status: foodData.food_status
+                }
+            }
+            const result = await foodCollection.updateOne(filter, updateData)
+            res.send(result);
+
         })
 
         // insert food request data to database
@@ -79,6 +114,12 @@ async function run() {
             const foodData = req.body;
             const result = await foodRequestCollection.insertOne(foodData)
             res.send(result)
+        })
+        app.get('/food-request/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { food_id: id }
+            const result = await foodRequestCollection.findOne(query)
+            res.send(result);
         })
 
 
